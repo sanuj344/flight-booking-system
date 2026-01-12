@@ -7,6 +7,17 @@ import { applySurgePricing } from "../utils/surgePricing.js";
 
 const router = express.Router();
 
+
+
+
+router.get("/", async (req, res) => {
+  const bookings = await Booking.find().sort({ booking_time: -1 });
+  res.json(bookings);
+});
+
+
+
+
 router.post("/", async (req, res) => {
   const { passenger_name, flight_id } = req.body;
 
