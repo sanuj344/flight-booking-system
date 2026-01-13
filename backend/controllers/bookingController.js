@@ -4,6 +4,7 @@ import Booking from "../models/Booking.js";
 import { v4 as uuid } from "uuid";
 import { applySurgePricing } from "../utils/surgePricing.js";
 import BookingAttempt from "../models/BookingAttempt.js";
+import { generateTicketPdf } from "../utils/generateTicketPdf.js";
 
 export const createBooking = async (req, res) => {
   try {
@@ -79,5 +80,22 @@ export const getBookingHistory = async (req, res) => {
     res.json(bookings);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch bookings" });
+  }
+};
+
+
+export const downloadTicket = async (req, res) => {
+  try {
+    const { pnr } = req.params;
+
+    const booking = await Booking.findOne({ pnr });
+    if (!booking) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+
+    generateTicketPdf(booking, res);
+
+  } catch (error) {
+    res.status(500).json({ message: "Failed to generate ticket PDF" });
   }
 };
